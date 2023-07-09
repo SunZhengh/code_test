@@ -2,18 +2,17 @@
  * @Author: hox hox@outlook.com
  * @Date: 2023-07-05 10:51:22
  * @LastEditors: hox 1510214118@qq.com
- * @LastEditTime: 2023-07-09 11:06:56
+ * @LastEditTime: 2023-07-09 11:42:01
  * @FilePath: \ctest\main.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- * https://dream.blog.csdn.net/article/details/131283882
- 9
-[1,4,5,2,0,2]
+ * https://dream.blog.csdn.net/article/details/131232619
+6 7
+2 12 6 3 5 5
+10 11
+1 1 1 1 1 1 1 1 1 1
 
-12
-[-1,2,4,9]
-
-9
-[1,5,2,0,2,4]
+1
+0
 
 
  */
@@ -34,77 +33,42 @@ typedef char s8;
 #define false               (0)
 #define true                (1)
 
-#define MAX_COUNT           (10000)
-#define MAX_STEP            (10000)
-#define STEP_LIMIT          (100000)
+#define MAX_NUM             (1000)
 
-
-typedef struct
+u32 get_sum(int *data, u32 base, u32 count)
 {
-    u32 first;
-    u32 second;
-    u32 third;
-    u32 min;
-}step_t;
-
-u32 main(void)
-{
-    u32 y = 0, z = 0, x = 0, order = 0;
-    u32 target = 0, count = 0;
-    s32 *steps = (s32 *)malloc(MAX_STEP * sizeof(s32));
-    char *num = NULL;
-    char *raw = (char *)malloc(MAX_STEP * 8);
-    step_t res = {0};
-    res.min = U32_MASK;
-
-    if ((NULL == steps) || (NULL == raw))
+    u32 i = 0, res = 0;
+    for (i = 0; i < count; i++)
     {
-        printf("mem fail\r\n");
+        res += data[base + i];
     }
-    memset(steps, 0x0, MAX_STEP * sizeof(s32));
+    return res;
+}
 
-    scanf("%d", &target);
-    scanf("%s", raw);
-    sscanf(raw, "[%[^]]", raw);
-    printf("%s\r\n", raw);
-    num = strtok(raw, ",");
-    while(NULL != num)
+int main(void)
+{
+    u32 count = 0, target = 0, i = 0, base = 0, sum = 0;
+    int data[MAX_NUM] = {0};
+    scanf("%d %d", &count, &target);
+    for (i = 0; i < count; i++)
     {
-        steps[count++] = atoi(num);
-        num = strtok(NULL, ",");
+        scanf("%d", &data[i]);
     }
 
-    for (x = 0; x < count; x++)
+    for (base = 0; base < count; base++)
     {
-        for (y = 0; y < count; y++)
+        for (i = 1; i < (count - base); i++)
         {
-            if (x == y)
+            sum = get_sum(data, base, i);
+            if (0 == (sum % target))
             {
-                continue;
-            }
-            for (z = 0; z < count; z++)
-            {
-                if ((x == z) || (y == z))
-                {
-                    continue;
-                }
-                if (target == (steps[x] + steps[y] + steps[z]))
-                {
-                    order = x + y + z;
-                    if (res.min > order)
-                    {
-                        res.min = order;
-                        res.first = x;
-                        res.second = y;
-                        res.third = z;
-                    }
-                }
+                printf("%d", 1);
+                return 0;
             }
         }
+        
     }
-
-    printf("[%d,%d,%d]\r\n", steps[res.first], steps[res.second], steps[res.third]);
-    free(raw);
-    free(steps);
+    printf("%d", 0);
     return 0;
 }
+

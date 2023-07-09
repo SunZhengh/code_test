@@ -2,7 +2,7 @@
  * @Author: hox hox@outlook.com
  * @Date: 2023-07-05 10:51:22
  * @LastEditors: hox 1510214118@qq.com
- * @LastEditTime: 2023-07-09 11:06:56
+ * @LastEditTime: 2023-07-09 11:30:28
  * @FilePath: \ctest\main.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * https://dream.blog.csdn.net/article/details/131283882
@@ -76,18 +76,10 @@ u32 main(void)
 
     for (x = 0; x < count; x++)
     {
-        for (y = 0; y < count; y++)
+        for (y = (X + 1); y < count; y++)
         {
-            if (x == y)
+            for (z = (y + 1); z < count; z++)
             {
-                continue;
-            }
-            for (z = 0; z < count; z++)
-            {
-                if ((x == z) || (y == z))
-                {
-                    continue;
-                }
                 if (target == (steps[x] + steps[y] + steps[z]))
                 {
                     order = x + y + z;
