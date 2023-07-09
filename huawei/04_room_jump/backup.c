@@ -6,70 +6,66 @@
  * @FilePath: \ctest\code_test\huawei\02_most_close_time\backup.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <limits.h>
 
-void updateCharMap(char *num, int length, int *charMap, int isAdd) {
-    for (int i = 0; i < length; i++) {
-        char c = num[i];
-        charMap[c] += isAdd ? 1 : -1;
+int count = 9;
+int minIndexSum = INT_MAX;
+int* resList = NULL;
+
+void printResult();
+
+void dfs(const int* nums, int remaining, int* combination, int* indices, int index) {
+    if (remaining == 0) {
+        int total = 0;
+        int indexSumTemp = 0;
+        for (int i = 0; i < 3; i++) {
+            total += combination[i];        // 计算组合的元素总和
+            indexSumTemp += indices[i];      // 计算索引总和
+        }
+        if (total == count && indexSumTemp < minIndexSum) {   // 满足条件时更新结果
+            minIndexSum = indexSumTemp;
+            if (resList) {
+                free(resList);
+            }
+            resList = (int*)malloc(3 * sizeof(int));
+            for (int i = 0; i < 3; i++) {
+                resList[i] = combination[i];
+            }
+        }
+    } else {
+        for (int i = index; i < 6; i++) {
+            combination[3 - remaining] = nums[i];    // 添加元素到组合
+            indices[3 - remaining] = i;              // 添加索引
+            dfs(nums, remaining - 1, combination, indices, i + 1);   // 递归调用
+        }
     }
 }
 
-int compareCharMaps(const int *map1, const int *map2) {
-    for (int i = 0; i < 256; i++) {
-        if (map1[i] != map2[i]) {
-            return 0;
+void printResult() {
+    printf("[");
+    for (int i = 0; i < 3; i++) {
+        printf("%d", resList[i]);
+        if (i != 2) {
+            printf(",");
         }
     }
-    return 1;
+    printf("]\n");
 }
 
 int main() {
-    char inputStr[1001];
-    int length;
+    int nums[] = {1, 5, 2, 0, 2, 4};
+    int combination[3];
+    int indices[3];
+    dfs(nums, 3, combination, indices, 0);
 
-    scanf("%s", inputStr);
-    scanf("%d", &length);
+    printResult();
 
-    int originCharMap[256] = {0};
-    int windowCharMap[256] = {0};
-
-    int inputStrLength = strlen(inputStr);
-    for (int i = 0; i < inputStrLength; i++) {
-        char c = inputStr[i];
-        originCharMap[(unsigned char)c]++;
-    }
-
-    for (int i = 1; i <= length; i++) {
-        char num[5];
-        sprintf(num, "%d", i);
-        updateCharMap(num, strlen(num), windowCharMap, 1);
-    }
-
-    if (compareCharMaps(originCharMap, windowCharMap)) {
-        printf("0\n");
-        return 0;
-    }
-
-    for (int i = 2; i <= 1000 - length + 1; i++) {
-        char remove[5];
-        sprintf(remove, "%d", i - 1);
-        updateCharMap(remove, strlen(remove), windowCharMap, 0);
-
-        char add[5];
-        sprintf(add, "%d", i + length - 1);
-        updateCharMap(add, strlen(add), windowCharMap, 1);
-
-        if (compareCharMaps(originCharMap, windowCharMap)) {
-            printf("%d\n", i);
-            return 0;
-        }
+    if (resList) {
+        free(resList);
     }
 
     return 0;
 }
-
 
